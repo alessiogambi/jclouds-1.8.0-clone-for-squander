@@ -29,50 +29,50 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(ImageImpl.class)
 public interface Image extends ComputeMetadataIncludingStatus<Image.Status> {
 
-   public static enum Status {
-      /**
-       * The image is in transition
-       */
-      PENDING,
-      /**
-       * The image is visible, and in the process of being deleted.
-       */
-      DELETED,
-      /**
-       * The image is available.
-       */
-      AVAILABLE,
-      /**
-       * There is an error on the image
-       */
-      ERROR,
-      /**
-       * The state of the image is unrecognized.
-       */
-      UNRECOGNIZED;
+	public static enum Status {
+		/**
+		 * The image is in transition
+		 */
+		PENDING,
+		/**
+		 * The image is visible, and in the process of being deleted.
+		 */
+		DELETED,
+		/**
+		 * The image is available.
+		 */
+		AVAILABLE,
+		/**
+		 * There is an error on the image
+		 */
+		ERROR,
+		/**
+		 * The state of the image is unrecognized.
+		 */
+		UNRECOGNIZED;
 
-   }
-   
-   /**
-    * The operating system installed on this image
-    */
-   @Beta
-   OperatingSystem getOperatingSystem();
+	}
 
-   /**
-    * Version of the image
-    */
-   String getVersion();
+	/**
+	 * The operating system installed on this image
+	 */
+	@Beta
+	OperatingSystem getOperatingSystem();
 
-   /**
-    * Description of the image.
-    */
-   @Nullable
-   String getDescription();
+	/**
+	 * Version of the image
+	 */
+	String getVersion();
 
-   /**
-    * Default credentials for the current image
-    */
-   LoginCredentials getDefaultCredentials();
+	/**
+	 * Description of the image.
+	 */
+	@Nullable
+	String getDescription();
+
+	/**
+	 * Default credentials for the current image
+	 */
+	LoginCredentials getDefaultCredentials();
 
 }

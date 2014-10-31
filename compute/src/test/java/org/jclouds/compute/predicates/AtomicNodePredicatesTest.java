@@ -23,16 +23,16 @@ import static org.easymock.EasyMock.verify;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.google.common.util.concurrent.Atomics;
-
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataStatus;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.domain.LoginCredentials;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.common.util.concurrent.Atomics;
 
 /**
  * Tests possible uses of NodePredicates
@@ -45,7 +45,7 @@ public class AtomicNodePredicatesTest {
 
    @Test
    public void testNoUpdatesAtomicReferenceOnPass() {
-      NodeMetadata running = new NodeMetadataBuilder().id("myid").status(Status.RUNNING).build();
+      NodeMetadata running = new NodeMetadataBuilder().id("myid").status(NodeMetadataStatus.RUNNING).build();
       GetNodeMetadataStrategy computeService = createMock(GetNodeMetadataStrategy.class);
 
       replay(computeService);
@@ -61,7 +61,7 @@ public class AtomicNodePredicatesTest {
 
    @Test
    public void testRefreshUpdatesAtomicReferenceOnRecheckPending() {
-      NodeMetadata pending = new NodeMetadataBuilder().id("myid").status(Status.PENDING).build();
+      NodeMetadata pending = new NodeMetadataBuilder().id("myid").status(NodeMetadataStatus.PENDING).build();
       GetNodeMetadataStrategy computeService = createMock(GetNodeMetadataStrategy.class);
 
       expect(computeService.getNode("myid")).andReturn(pending);
@@ -80,11 +80,11 @@ public class AtomicNodePredicatesTest {
    @Test
    public void testRefreshUpdatesAtomicReferenceOnRecheckPendingAcceptsNewCredentials() {
       LoginCredentials creds = LoginCredentials.builder().user("user").password("password").build();
-      NodeMetadata newNode = new NodeMetadataBuilder().id("myid").status(Status.UNRECOGNIZED).credentials(creds).build();
+      NodeMetadata newNode = new NodeMetadataBuilder().id("myid").status(NodeMetadataStatus.UNRECOGNIZED).credentials(creds).build();
 
       LoginCredentials creds2 = LoginCredentials.builder().user("user").password("password2").build();
 
-      NodeMetadata pending = new NodeMetadataBuilder().id("myid").status(Status.PENDING).credentials(creds2).build();
+      NodeMetadata pending = new NodeMetadataBuilder().id("myid").status(NodeMetadataStatus.PENDING).credentials(creds2).build();
       
       GetNodeMetadataStrategy computeService = createMock(GetNodeMetadataStrategy.class);
 
@@ -102,8 +102,8 @@ public class AtomicNodePredicatesTest {
    
    @Test
    public void testRefreshUpdatesAtomicReferenceOnRecheckRunning() {
-      NodeMetadata running = new NodeMetadataBuilder().id("myid").status(Status.RUNNING).build();
-      NodeMetadata pending = new NodeMetadataBuilder().id("myid").status(Status.PENDING).build();
+      NodeMetadata running = new NodeMetadataBuilder().id("myid").status(NodeMetadataStatus.RUNNING).build();
+      NodeMetadata pending = new NodeMetadataBuilder().id("myid").status(NodeMetadataStatus.PENDING).build();
       GetNodeMetadataStrategy computeService = createMock(GetNodeMetadataStrategy.class);
 
       expect(computeService.getNode("myid")).andReturn(running);
@@ -131,7 +131,7 @@ public class AtomicNodePredicatesTest {
 
    @Test
    public void testNodeRunningReturnsTrueWhenRunning() {
-      expect(node.getStatus()).andReturn(Status.RUNNING).atLeastOnce();
+      expect(node.getStatus()).andReturn(NodeMetadataStatus.RUNNING).atLeastOnce();
       expect(node.getBackendStatus()).andReturn(null).atLeastOnce();
       replay(node, computeService);
 
@@ -143,7 +143,7 @@ public class AtomicNodePredicatesTest {
    
    @Test
    public void testNodeSuspendedReturnsTrueWhenSuspended() {
-      expect(node.getStatus()).andReturn(Status.SUSPENDED).atLeastOnce();
+      expect(node.getStatus()).andReturn(NodeMetadataStatus.SUSPENDED).atLeastOnce();
       expect(node.getBackendStatus()).andReturn(null).atLeastOnce();
       replay(node, computeService);
 
@@ -155,7 +155,7 @@ public class AtomicNodePredicatesTest {
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testNodeRunningFailsOnTerminated() {
-      expect(node.getStatus()).andReturn(Status.TERMINATED).atLeastOnce();
+      expect(node.getStatus()).andReturn(NodeMetadataStatus.TERMINATED).atLeastOnce();
       expect(node.getBackendStatus()).andReturn(null).atLeastOnce();
       replay(node, computeService);
 
@@ -167,7 +167,7 @@ public class AtomicNodePredicatesTest {
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testNodeRunningFailsOnError() {
-      expect(node.getStatus()).andReturn(Status.ERROR).atLeastOnce();
+      expect(node.getStatus()).andReturn(NodeMetadataStatus.ERROR).atLeastOnce();
       expect(node.getBackendStatus()).andReturn(null).atLeastOnce();
       replay(node, computeService);
 

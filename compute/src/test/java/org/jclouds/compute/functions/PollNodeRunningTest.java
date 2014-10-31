@@ -27,8 +27,8 @@ import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.compute.domain.NodeMetadataStatus;
 import org.jclouds.compute.predicates.AtomicNodeRunning;
 import org.jclouds.compute.reference.ComputeServiceConstants.PollPeriod;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
@@ -43,7 +43,7 @@ public class PollNodeRunningTest {
 
    @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "node\\(id\\) didn't achieve the status running; aborting after 0 seconds with final status: PENDING")
    public void testIllegalStateExceptionWhenNodeStillPending() {
-      final NodeMetadata pendingNode = new NodeMetadataBuilder().ids("id").status(Status.PENDING).build();
+      final NodeMetadata pendingNode = new NodeMetadataBuilder().ids("id").status(NodeMetadataStatus.PENDING).build();
 
       // node always stays pending
       Predicate<AtomicReference<NodeMetadata>> nodeRunning = new Predicate<AtomicReference<NodeMetadata>>() {
@@ -66,8 +66,8 @@ public class PollNodeRunningTest {
 
    @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "node\\(id\\) terminated")
    public void testIllegalStateExceptionWhenNodeDied() {
-      final NodeMetadata pendingNode = new NodeMetadataBuilder().ids("id").status(Status.PENDING).build();
-      final NodeMetadata deadNode = new NodeMetadataBuilder().ids("id").status(Status.TERMINATED).build();
+      final NodeMetadata pendingNode = new NodeMetadataBuilder().ids("id").status(NodeMetadataStatus.PENDING).build();
+      final NodeMetadata deadNode = new NodeMetadataBuilder().ids("id").status(NodeMetadataStatus.TERMINATED).build();
 
       Predicate<AtomicReference<NodeMetadata>> nodeRunning = new Predicate<AtomicReference<NodeMetadata>>() {
 
@@ -90,7 +90,7 @@ public class PollNodeRunningTest {
 
    @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "api response for node\\(id\\) was null")
    public void testIllegalStateExceptionAndNodeResetWhenRefSetToNull() {
-      final NodeMetadata pendingNode = new NodeMetadataBuilder().ids("id").status(Status.PENDING).build();
+      final NodeMetadata pendingNode = new NodeMetadataBuilder().ids("id").status(NodeMetadataStatus.PENDING).build();
 
       Predicate<AtomicReference<NodeMetadata>> nodeRunning = new Predicate<AtomicReference<NodeMetadata>>() {
 
@@ -117,8 +117,8 @@ public class PollNodeRunningTest {
 
       PollPeriod period = new PollPeriod();
 
-      final NodeMetadata pendingNode = new NodeMetadataBuilder().ids(nodeId).status(Status.PENDING).build();
-      final NodeMetadata runningNode = new NodeMetadataBuilder().ids(nodeId).status(Status.RUNNING).build();
+      final NodeMetadata pendingNode = new NodeMetadataBuilder().ids(nodeId).status(NodeMetadataStatus.PENDING).build();
+      final NodeMetadata runningNode = new NodeMetadataBuilder().ids(nodeId).status(NodeMetadataStatus.RUNNING).build();
       GetNodeMetadataStrategy nodeClient = createMock(GetNodeMetadataStrategy.class);
       AtomicNodeRunning nodeRunning = new AtomicNodeRunning(nodeClient);
       Predicate<AtomicReference<NodeMetadata>> retryableNodeRunning = new ComputeServiceTimeoutsModule() {
@@ -151,7 +151,7 @@ public class PollNodeRunningTest {
       // run
       new PollNodeRunning(retryableNodeRunning).apply(atomicNode);
 
-      assertEquals(atomicNode.get().getStatus(), Status.RUNNING);
+      assertEquals(atomicNode.get().getStatus(), NodeMetadataStatus.RUNNING);
 
       // verify mocks
       verify(nodeClient);

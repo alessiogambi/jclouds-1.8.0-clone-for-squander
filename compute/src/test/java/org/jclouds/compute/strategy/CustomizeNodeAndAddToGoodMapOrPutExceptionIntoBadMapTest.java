@@ -30,8 +30,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.compute.domain.NodeMetadataStatus;
 import org.jclouds.compute.functions.TemplateOptionsToStatement;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.util.OpenSocketFinder;
@@ -50,90 +50,106 @@ import com.google.common.util.concurrent.Atomics;
 @Test(groups = "unit", testName = "CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest")
 public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
 
-   public void testBreakOnIllegalStateExceptionDuringPollNode() {
-      InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory = createMock(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class);
-      OpenSocketFinder openSocketFinder = createMock(OpenSocketFinder.class);
-      Function<TemplateOptions, Statement> templateOptionsToStatement = new TemplateOptionsToStatement();
-      @SuppressWarnings("unused")
-      Statement statement = null;
-      TemplateOptions options = new TemplateOptions();
-      Set<NodeMetadata> goodNodes = Sets.newLinkedHashSet();
-      Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
-      Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap.create();
+	public void testBreakOnIllegalStateExceptionDuringPollNode() {
+		InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory = createMock(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class);
+		OpenSocketFinder openSocketFinder = createMock(OpenSocketFinder.class);
+		Function<TemplateOptions, Statement> templateOptionsToStatement = new TemplateOptionsToStatement();
+		@SuppressWarnings("unused")
+		Statement statement = null;
+		TemplateOptions options = new TemplateOptions();
+		Set<NodeMetadata> goodNodes = Sets.newLinkedHashSet();
+		Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
+		Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap
+				.create();
 
-      final NodeMetadata pendingNode = new NodeMetadataBuilder().ids("id").status(Status.PENDING).build();
+		final NodeMetadata pendingNode = new NodeMetadataBuilder().ids("id")
+				.status(NodeMetadataStatus.PENDING).build();
 
-      // node always stays pending
-      Function<AtomicReference<NodeMetadata>, AtomicReference<NodeMetadata>> pollNodeRunning = new Function<AtomicReference<NodeMetadata>, AtomicReference<NodeMetadata>>() {
+		// node always stays pending
+		Function<AtomicReference<NodeMetadata>, AtomicReference<NodeMetadata>> pollNodeRunning = new Function<AtomicReference<NodeMetadata>, AtomicReference<NodeMetadata>>() {
 
-         @Override
-         public AtomicReference<NodeMetadata> apply(AtomicReference<NodeMetadata> node) {
-            Assert.assertEquals(node.get(), pendingNode);
-            throw new IllegalStateException("bad state!");
-         }
+			@Override
+			public AtomicReference<NodeMetadata> apply(
+					AtomicReference<NodeMetadata> node) {
+				Assert.assertEquals(node.get(), pendingNode);
+				throw new IllegalStateException("bad state!");
+			}
 
-      };
+		};
 
-      // replay mocks
-      replay(initScriptRunnerFactory, openSocketFinder);
-      // run
-      AtomicReference<NodeMetadata> atomicNode = Atomics.newReference(pendingNode);
-      new CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(pollNodeRunning, openSocketFinder,
-            templateOptionsToStatement, initScriptRunnerFactory, options, atomicNode, goodNodes, badNodes,
-            customizationResponses).apply(atomicNode);
+		// replay mocks
+		replay(initScriptRunnerFactory, openSocketFinder);
+		// run
+		AtomicReference<NodeMetadata> atomicNode = Atomics
+				.newReference(pendingNode);
+		new CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
+				pollNodeRunning, openSocketFinder, templateOptionsToStatement,
+				initScriptRunnerFactory, options, atomicNode, goodNodes,
+				badNodes, customizationResponses).apply(atomicNode);
 
-      assertEquals(goodNodes.size(), 0);
-      assertEquals(badNodes.keySet(), ImmutableSet.of(pendingNode));
-      assertEquals(badNodes.get(pendingNode).getMessage(), "bad state!");
-      assertEquals(customizationResponses.size(), 0);
+		assertEquals(goodNodes.size(), 0);
+		assertEquals(badNodes.keySet(), ImmutableSet.of(pendingNode));
+		assertEquals(badNodes.get(pendingNode).getMessage(), "bad state!");
+		assertEquals(customizationResponses.size(), 0);
 
-      // verify mocks
-      verify(initScriptRunnerFactory, openSocketFinder);
-   }
+		// verify mocks
+		verify(initScriptRunnerFactory, openSocketFinder);
+	}
 
-   public void testBreakGraceWhenNodeSocketFailsToOpen() {
-      int portTimeoutSecs = 2;
-      InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory = createMock(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class);
-      OpenSocketFinder openSocketFinder = createMock(OpenSocketFinder.class);
-      Function<TemplateOptions, Statement> templateOptionsToStatement = new TemplateOptionsToStatement();
-      TemplateOptions options = new TemplateOptions().blockOnPort(22, portTimeoutSecs);
-      Set<NodeMetadata> goodNodes = Sets.newLinkedHashSet();
-      Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
-      Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap.create();
+	public void testBreakGraceWhenNodeSocketFailsToOpen() {
+		int portTimeoutSecs = 2;
+		InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory = createMock(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class);
+		OpenSocketFinder openSocketFinder = createMock(OpenSocketFinder.class);
+		Function<TemplateOptions, Statement> templateOptionsToStatement = new TemplateOptionsToStatement();
+		TemplateOptions options = new TemplateOptions().blockOnPort(22,
+				portTimeoutSecs);
+		Set<NodeMetadata> goodNodes = Sets.newLinkedHashSet();
+		Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
+		Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap
+				.create();
 
-      final NodeMetadata pendingNode = new NodeMetadataBuilder().ids("id").status(Status.PENDING).build();
-      final NodeMetadata runningNode = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).build();
+		final NodeMetadata pendingNode = new NodeMetadataBuilder().ids("id")
+				.status(NodeMetadataStatus.PENDING).build();
+		final NodeMetadata runningNode = new NodeMetadataBuilder().ids("id")
+				.status(NodeMetadataStatus.RUNNING).build();
 
-      expect(openSocketFinder.findOpenSocketOnNode(runningNode, 22, portTimeoutSecs, TimeUnit.SECONDS)).andThrow(
-            new NoSuchElementException("could not connect to any ip address port")).once();
+		expect(
+				openSocketFinder.findOpenSocketOnNode(runningNode, 22,
+						portTimeoutSecs, TimeUnit.SECONDS)).andThrow(
+				new NoSuchElementException(
+						"could not connect to any ip address port")).once();
 
-      Function<AtomicReference<NodeMetadata>, AtomicReference<NodeMetadata>> pollNodeRunning = new Function<AtomicReference<NodeMetadata>, AtomicReference<NodeMetadata>>() {
+		Function<AtomicReference<NodeMetadata>, AtomicReference<NodeMetadata>> pollNodeRunning = new Function<AtomicReference<NodeMetadata>, AtomicReference<NodeMetadata>>() {
 
-         @Override
-         public AtomicReference<NodeMetadata> apply(AtomicReference<NodeMetadata> node) {
-            Assert.assertEquals(node.get(), pendingNode);
-            node.set(runningNode);
-            return node;
-         }
+			@Override
+			public AtomicReference<NodeMetadata> apply(
+					AtomicReference<NodeMetadata> node) {
+				Assert.assertEquals(node.get(), pendingNode);
+				node.set(runningNode);
+				return node;
+			}
 
-      };
+		};
 
-      // replay mocks
-      replay(initScriptRunnerFactory, openSocketFinder);
+		// replay mocks
+		replay(initScriptRunnerFactory, openSocketFinder);
 
-      // run
-      AtomicReference<NodeMetadata> atomicNode = Atomics.newReference(pendingNode);
-      new CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(pollNodeRunning, openSocketFinder,
-            templateOptionsToStatement, initScriptRunnerFactory, options, atomicNode, goodNodes, badNodes,
-            customizationResponses).apply(atomicNode);
+		// run
+		AtomicReference<NodeMetadata> atomicNode = Atomics
+				.newReference(pendingNode);
+		new CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
+				pollNodeRunning, openSocketFinder, templateOptionsToStatement,
+				initScriptRunnerFactory, options, atomicNode, goodNodes,
+				badNodes, customizationResponses).apply(atomicNode);
 
-      assertEquals(goodNodes.size(), 0);
-      assertEquals(badNodes.keySet(), ImmutableSet.of(pendingNode));
-      badNodes.get(pendingNode).printStackTrace();
-      assertEquals(badNodes.get(pendingNode).getMessage(), "could not connect to any ip address port");
-      assertEquals(customizationResponses.size(), 0);
+		assertEquals(goodNodes.size(), 0);
+		assertEquals(badNodes.keySet(), ImmutableSet.of(pendingNode));
+		badNodes.get(pendingNode).printStackTrace();
+		assertEquals(badNodes.get(pendingNode).getMessage(),
+				"could not connect to any ip address port");
+		assertEquals(customizationResponses.size(), 0);
 
-      // verify mocks
-      verify(initScriptRunnerFactory, openSocketFinder);
-   }
+		// verify mocks
+		verify(initScriptRunnerFactory, openSocketFinder);
+	}
 }

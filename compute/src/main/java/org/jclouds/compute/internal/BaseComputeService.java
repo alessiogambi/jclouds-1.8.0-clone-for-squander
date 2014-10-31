@@ -60,7 +60,7 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataStatus;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -632,7 +632,7 @@ public class BaseComputeService implements ComputeService {
       NodeMetadata node = this.getNodeMetadata(id);
       if (node == null)
          throw new NoSuchElementException(id);
-      if (node.getStatus() != Status.RUNNING)
+      if (node.getStatus() != NodeMetadataStatus.RUNNING)
          throw new IllegalStateException("node " + id
                + " needs to be running before executing a script on it. current state: " + formatStatus(node));
       initAdminAccess.visit(runScript);
@@ -659,7 +659,7 @@ public class BaseComputeService implements ComputeService {
       NodeMetadata node = this.getNodeMetadata(id);
       if (node == null)
          throw new NoSuchElementException(id);
-      if (node.getStatus() != Status.RUNNING)
+      if (node.getStatus() != NodeMetadataStatus.RUNNING)
          throw new IllegalStateException("node " + id
                + " needs to be running before executing a script on it. current state: " + formatStatus(node));
       initAdminAccess.visit(runScript);

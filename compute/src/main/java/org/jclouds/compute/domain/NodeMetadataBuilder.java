@@ -22,7 +22,6 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
@@ -32,136 +31,151 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 public class NodeMetadataBuilder extends ComputeMetadataBuilder {
-   private Status status;
-   private String backendStatus;
-   private Set<String> publicAddresses = Sets.newLinkedHashSet();
-   private Set<String> privateAddresses = Sets.newLinkedHashSet();
-   @Nullable
-   private LoginCredentials credentials;
-   @Nullable
-   private String group;
-   private int loginPort = 22;
-   @Nullable
-   private String imageId;
-   @Nullable
-   private Hardware hardware;
-   @Nullable
-   private OperatingSystem os;
-   @Nullable
-   private String hostname;
+	// private Status status;
+	private NodeMetadataStatus status;
+	private String backendStatus;
+	private Set<String> publicAddresses = Sets.newLinkedHashSet();
+	private Set<String> privateAddresses = Sets.newLinkedHashSet();
+	@Nullable
+	private LoginCredentials credentials;
+	@Nullable
+	private String group;
+	private int loginPort = 22;
+	@Nullable
+	private String imageId;
+	@Nullable
+	private Hardware hardware;
+	@Nullable
+	private OperatingSystem os;
+	@Nullable
+	private String hostname;
 
-   public NodeMetadataBuilder() {
-      super(ComputeType.NODE);
-   }
+	public NodeMetadataBuilder() {
+		super(ComputeType.NODE);
+	}
 
-   public NodeMetadataBuilder loginPort(int loginPort) {
-      this.loginPort = loginPort;
-      return this;
-   }
-  
-   public NodeMetadataBuilder status(Status status) {
-      this.status = checkNotNull(status, "status");
-      return this;
-   }
-   
-   public NodeMetadataBuilder backendStatus(@Nullable String backendStatus) {
-      this.backendStatus = backendStatus;
-      return this;
-   }
+	public NodeMetadataBuilder loginPort(int loginPort) {
+		this.loginPort = loginPort;
+		return this;
+	}
 
-   public NodeMetadataBuilder publicAddresses(Iterable<String> publicAddresses) {
-      this.publicAddresses = ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses"));
-      return this;
-   }
+	public NodeMetadataBuilder status(NodeMetadataStatus status) {
+		this.status = checkNotNull(status, "status");
+		return this;
+	}
 
-   public NodeMetadataBuilder privateAddresses(Iterable<String> privateAddresses) {
-      this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));
-      return this;
-   }
+	public NodeMetadataBuilder backendStatus(@Nullable String backendStatus) {
+		this.backendStatus = backendStatus;
+		return this;
+	}
 
-   public NodeMetadataBuilder credentials(@Nullable LoginCredentials credentials) {
-      this.credentials = credentials;
-      return this;
-   }
+	public NodeMetadataBuilder publicAddresses(Iterable<String> publicAddresses) {
+		this.publicAddresses = ImmutableSet.copyOf(checkNotNull(
+				publicAddresses, "publicAddresses"));
+		return this;
+	}
 
-   public NodeMetadataBuilder group(@Nullable String group) {
-      this.group = group;
-      return this;
-   }
+	public NodeMetadataBuilder privateAddresses(
+			Iterable<String> privateAddresses) {
+		this.privateAddresses = ImmutableSet.copyOf(checkNotNull(
+				privateAddresses, "privateAddresses"));
+		return this;
+	}
 
-   public NodeMetadataBuilder imageId(@Nullable String imageId) {
-      this.imageId = imageId;
-      return this;
-   }
+	public NodeMetadataBuilder credentials(
+			@Nullable LoginCredentials credentials) {
+		this.credentials = credentials;
+		return this;
+	}
 
-   public NodeMetadataBuilder hardware(@Nullable Hardware hardware) {
-      this.hardware = hardware;
-      return this;
-   }
+	public NodeMetadataBuilder group(@Nullable String group) {
+		this.group = group;
+		return this;
+	}
 
-   public NodeMetadataBuilder operatingSystem(@Nullable OperatingSystem os) {
-      this.os = os;
-      return this;
-   }
+	public NodeMetadataBuilder imageId(@Nullable String imageId) {
+		this.imageId = imageId;
+		return this;
+	}
 
-   public NodeMetadataBuilder hostname(String hostname) {
-      this.hostname = hostname;
-      return this;
-   }
+	public NodeMetadataBuilder hardware(@Nullable Hardware hardware) {
+		this.hardware = hardware;
+		return this;
+	}
 
-   @Override
-   public NodeMetadataBuilder id(String id) {
-      return NodeMetadataBuilder.class.cast(super.id(id));
-   }
+	public NodeMetadataBuilder operatingSystem(@Nullable OperatingSystem os) {
+		this.os = os;
+		return this;
+	}
 
-   @Override
-   public NodeMetadataBuilder tags(Iterable<String> tags) {
-      return NodeMetadataBuilder.class.cast(super.tags(tags));
-   }
+	public NodeMetadataBuilder hostname(String hostname) {
+		this.hostname = hostname;
+		return this;
+	}
 
-   @Override
-   public NodeMetadataBuilder ids(String id) {
-      return NodeMetadataBuilder.class.cast(super.ids(id));
-   }
+	@Override
+	public NodeMetadataBuilder id(String id) {
+		return NodeMetadataBuilder.class.cast(super.id(id));
+	}
 
-   @Override
-   public NodeMetadataBuilder providerId(String providerId) {
-      return NodeMetadataBuilder.class.cast(super.providerId(providerId));
-   }
+	@Override
+	public NodeMetadataBuilder tags(Iterable<String> tags) {
+		return NodeMetadataBuilder.class.cast(super.tags(tags));
+	}
 
-   @Override
-   public NodeMetadataBuilder name(String name) {
-      return NodeMetadataBuilder.class.cast(super.name(name));
-   }
+	@Override
+	public NodeMetadataBuilder ids(String id) {
+		return NodeMetadataBuilder.class.cast(super.ids(id));
+	}
 
-   @Override
-   public NodeMetadataBuilder location(Location location) {
-      return NodeMetadataBuilder.class.cast(super.location(location));
-   }
+	@Override
+	public NodeMetadataBuilder providerId(String providerId) {
+		return NodeMetadataBuilder.class.cast(super.providerId(providerId));
+	}
 
-   @Override
-   public NodeMetadataBuilder uri(URI uri) {
-      return NodeMetadataBuilder.class.cast(super.uri(uri));
-   }
+	@Override
+	public NodeMetadataBuilder name(String name) {
+		return NodeMetadataBuilder.class.cast(super.name(name));
+	}
 
-   @Override
-   public NodeMetadataBuilder userMetadata(Map<String, String> userMetadata) {
-      return NodeMetadataBuilder.class.cast(super.userMetadata(userMetadata));
-   }
+	@Override
+	public NodeMetadataBuilder location(Location location) {
+		return NodeMetadataBuilder.class.cast(super.location(location));
+	}
 
-   @Override
-   public NodeMetadata build() {
-      return new NodeMetadataImpl(providerId, name, id, location, uri, userMetadata, tags, group, hardware, imageId,
-               os, status, backendStatus, loginPort, publicAddresses, privateAddresses, credentials, hostname);
-   }
+	@Override
+	public NodeMetadataBuilder uri(URI uri) {
+		return NodeMetadataBuilder.class.cast(super.uri(uri));
+	}
 
-   public static NodeMetadataBuilder fromNodeMetadata(NodeMetadata node) {
-      return new NodeMetadataBuilder().providerId(node.getProviderId()).name(node.getName()).id(node.getId()).location(
-               node.getLocation()).uri(node.getUri()).userMetadata(node.getUserMetadata()).tags(node.getTags()).group(
-               node.getGroup()).hardware(node.getHardware()).imageId(node.getImageId()).operatingSystem(
-               node.getOperatingSystem()).status(node.getStatus()).backendStatus(node.getBackendStatus()).loginPort(
-               node.getLoginPort()).publicAddresses(node.getPublicAddresses()).privateAddresses(
-               node.getPrivateAddresses()).credentials(node.getCredentials()).hostname(node.getHostname());
-   }
+	@Override
+	public NodeMetadataBuilder userMetadata(Map<String, String> userMetadata) {
+		return NodeMetadataBuilder.class.cast(super.userMetadata(userMetadata));
+	}
+
+	@Override
+	public NodeMetadata build() {
+		return new NodeMetadataImpl(providerId, name, id, location, uri,
+				userMetadata, tags, group, hardware, imageId, os, status,
+				backendStatus, loginPort, publicAddresses, privateAddresses,
+				credentials, hostname);
+	}
+
+	public static NodeMetadataBuilder fromNodeMetadata(NodeMetadata node) {
+		return new NodeMetadataBuilder().providerId(node.getProviderId())
+				.name(node.getName()).id(node.getId())
+				.location(node.getLocation()).uri(node.getUri())
+				.userMetadata(node.getUserMetadata()).tags(node.getTags())
+				.group(node.getGroup()).hardware(node.getHardware())
+				.imageId(node.getImageId())
+				.operatingSystem(node.getOperatingSystem())
+				.status(node.getStatus())
+				.backendStatus(node.getBackendStatus())
+				.loginPort(node.getLoginPort())
+				.publicAddresses(node.getPublicAddresses())
+				.privateAddresses(node.getPrivateAddresses())
+				.credentials(node.getCredentials())
+				.hostname(node.getHostname());
+	}
 
 }

@@ -22,7 +22,7 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "StubApiMetadataTest")
 public class StubApiMetadataTest extends BaseComputeServiceApiMetadataTest {
 
-   public StubApiMetadataTest() {
-      super(new StubApiMetadata());
-   }
+	public StubApiMetadataTest() {
+		super(new StubApiMetadata());
+	}
 }

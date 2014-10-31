@@ -19,7 +19,7 @@ package org.jclouds.compute.predicates;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataStatus;
 import org.jclouds.compute.predicates.internal.RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 
@@ -30,10 +30,13 @@ import com.google.common.collect.ImmutableSet;
  * Tests to see if a node is suspended.
  */
 @Singleton
-public class AtomicNodeSuspended extends RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid {
+public class AtomicNodeSuspended extends
+		RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid {
 
-   @Inject
-   public AtomicNodeSuspended(GetNodeMetadataStrategy client) {
-      super(Status.SUSPENDED, ImmutableSet.of(Status.ERROR, Status.TERMINATED), client);
-   }
+	@Inject
+	public AtomicNodeSuspended(GetNodeMetadataStrategy client) {
+		super(NodeMetadataStatus.SUSPENDED, ImmutableSet.of(
+				NodeMetadataStatus.ERROR, NodeMetadataStatus.TERMINATED),
+				client);
+	}
 }

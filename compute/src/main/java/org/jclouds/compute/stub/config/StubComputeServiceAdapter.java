@@ -37,8 +37,8 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.compute.domain.NodeMetadataStatus;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.SecurityGroup;
@@ -62,213 +62,242 @@ import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
 @Singleton
-public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAdapter {
-   private final Supplier<Location> location;
-   private final ConcurrentMap<String, NodeMetadata> nodes;
-   private final Multimap<String, SecurityGroup> groupsForNodes;
-   private final ListeningExecutorService ioExecutor;
-   private final Provider<Integer> idProvider;
-   private final Provider<Integer> groupIdProvider;
-   private final String publicIpPrefix;
-   private final String privateIpPrefix;
-   private final String passwordPrefix;
-   private final Supplier<Set<? extends Location>> locationSupplier;
-   private final Map<OsFamily, Map<String, String>> osToVersionMap;
-   private final Optional<SecurityGroupExtension> securityGroupExtension;
+public class StubComputeServiceAdapter implements
+		JCloudsNativeComputeServiceAdapter {
+	private final Supplier<Location> location;
+	private final ConcurrentMap<String, NodeMetadata> nodes;
+	private final Multimap<String, SecurityGroup> groupsForNodes;
+	private final ListeningExecutorService ioExecutor;
+	private final Provider<Integer> idProvider;
+	private final Provider<Integer> groupIdProvider;
+	private final String publicIpPrefix;
+	private final String privateIpPrefix;
+	private final String passwordPrefix;
+	private final Supplier<Set<? extends Location>> locationSupplier;
+	private final Map<OsFamily, Map<String, String>> osToVersionMap;
+	private final Optional<SecurityGroupExtension> securityGroupExtension;
 
-   @Inject
-   public StubComputeServiceAdapter(ConcurrentMap<String, NodeMetadata> nodes,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor, Supplier<Location> location,
-            @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
-            @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix,
-            JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap,
-            Multimap<String, SecurityGroup> groupsForNodes, @Named("GROUP_ID") Provider<Integer> groupIdProvider,
-            Optional<SecurityGroupExtension> securityGroupExtension) {
-      this.nodes = nodes;
-      this.ioExecutor = ioExecutor;
-      this.location = location;
-      this.idProvider = idProvider;
-      this.publicIpPrefix = publicIpPrefix;
-      this.privateIpPrefix = privateIpPrefix;
-      this.passwordPrefix = passwordPrefix;
-      this.locationSupplier = locationSupplier;
-      this.osToVersionMap = osToVersionMap;
-      this.groupsForNodes = groupsForNodes;
-      this.groupIdProvider = groupIdProvider;
-      this.securityGroupExtension = securityGroupExtension;
-   }
+	@Inject
+	public StubComputeServiceAdapter(
+			ConcurrentMap<String, NodeMetadata> nodes,
+			@Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor,
+			Supplier<Location> location,
+			@Named("NODE_ID") Provider<Integer> idProvider,
+			@Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
+			@Named("PRIVATE_IP_PREFIX") String privateIpPrefix,
+			@Named("PASSWORD_PREFIX") String passwordPrefix,
+			JustProvider locationSupplier,
+			Map<OsFamily, Map<String, String>> osToVersionMap,
+			Multimap<String, SecurityGroup> groupsForNodes,
+			@Named("GROUP_ID") Provider<Integer> groupIdProvider,
+			Optional<SecurityGroupExtension> securityGroupExtension) {
+		this.nodes = nodes;
+		this.ioExecutor = ioExecutor;
+		this.location = location;
+		this.idProvider = idProvider;
+		this.publicIpPrefix = publicIpPrefix;
+		this.privateIpPrefix = privateIpPrefix;
+		this.passwordPrefix = passwordPrefix;
+		this.locationSupplier = locationSupplier;
+		this.osToVersionMap = osToVersionMap;
+		this.groupsForNodes = groupsForNodes;
+		this.groupIdProvider = groupIdProvider;
+		this.securityGroupExtension = securityGroupExtension;
+	}
 
-   protected void setStateOnNode(Status status, NodeMetadata node) {
-      nodes.put(node.getId(), NodeMetadataBuilder.fromNodeMetadata(node).status(status).build());
-   }
+	protected void setStateOnNode(NodeMetadataStatus status, NodeMetadata node) {
+		nodes.put(node.getId(), NodeMetadataBuilder.fromNodeMetadata(node)
+				.status(status).build());
+	}
 
-   protected void setStateOnNodeAfterDelay(final Status status, final NodeMetadata node, final long millis) {
-      if (millis == 0l)
-         setStateOnNode(status, node);
-      else
-         ioExecutor.execute(new Runnable() {
+	protected void setStateOnNodeAfterDelay(final NodeMetadataStatus status,
+			final NodeMetadata node, final long millis) {
+		if (millis == 0l)
+			setStateOnNode(status, node);
+		else
+			ioExecutor.execute(new Runnable() {
 
-            @Override
-            public void run() {
-               try {
-                  Thread.sleep(millis);
-               } catch (InterruptedException e) {
-                  Throwables.propagate(e);
-               }
-               setStateOnNode(status, node);
-            }
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(millis);
+					} catch (InterruptedException e) {
+						Throwables.propagate(e);
+					}
+					setStateOnNode(status, node);
+				}
 
-         });
-   }
-   @Override
-   public NodeWithInitialCredentials createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
-      NodeMetadataBuilder builder = new NodeMetadataBuilder();
-      String id = idProvider.get() + "";
-      builder.ids(id);
-      builder.name(name);
-      // using a predictable name so tests will pass
-      builder.hostname(group);
-      builder.tags(template.getOptions().getTags());
-      builder.userMetadata(template.getOptions().getUserMetadata());
-      builder.group(group);
-      builder.location(location.get());
-      builder.imageId(template.getImage().getId());
-      builder.operatingSystem(template.getImage().getOperatingSystem());
-      builder.status(Status.PENDING);
-      builder.publicAddresses(ImmutableSet.<String> of(publicIpPrefix + id));
-      builder.privateAddresses(ImmutableSet.<String> of(privateIpPrefix + id));
-      builder.credentials(LoginCredentials.builder().user("root").password(passwordPrefix + id).build());
-      NodeMetadata node = builder.build();
-      nodes.put(node.getId(), node);
+			});
+	}
 
-      if (template.getOptions().getGroups().size() > 0) {
-         final String groupId = Iterables.getFirst(template.getOptions().getGroups(), "0");
-         Optional<SecurityGroup> secGroup = Iterables.tryFind(securityGroupExtension.get().listSecurityGroups(),
-                                                              new Predicate<SecurityGroup>() {
-                                                                 @Override
-                                                                 public boolean apply(SecurityGroup input) {
-                                                                    return input.getId().equals(groupId);
-                                                                 }
-                                                              });
+	@Override
+	public NodeWithInitialCredentials createNodeWithGroupEncodedIntoName(
+			String group, String name, Template template) {
+		NodeMetadataBuilder builder = new NodeMetadataBuilder();
+		String id = idProvider.get() + "";
+		builder.ids(id);
+		builder.name(name);
+		// using a predictable name so tests will pass
+		builder.hostname(group);
+		builder.tags(template.getOptions().getTags());
+		builder.userMetadata(template.getOptions().getUserMetadata());
+		builder.group(group);
+		builder.location(location.get());
+		builder.imageId(template.getImage().getId());
+		builder.operatingSystem(template.getImage().getOperatingSystem());
+		builder.status(NodeMetadataStatus.PENDING);
+		builder.publicAddresses(ImmutableSet.<String> of(publicIpPrefix + id));
+		builder.privateAddresses(ImmutableSet.<String> of(privateIpPrefix + id));
+		builder.credentials(LoginCredentials.builder().user("root")
+				.password(passwordPrefix + id).build());
+		NodeMetadata node = builder.build();
+		nodes.put(node.getId(), node);
 
-         if (secGroup.isPresent()) {
-            groupsForNodes.put(node.getId(), secGroup.get());
-         }
-      }
-      
-      setStateOnNodeAfterDelay(Status.RUNNING, node, 100);
-      return new NodeWithInitialCredentials(node);
-   }
+		if (template.getOptions().getGroups().size() > 0) {
+			final String groupId = Iterables.getFirst(template.getOptions()
+					.getGroups(), "0");
+			Optional<SecurityGroup> secGroup = Iterables.tryFind(
+					securityGroupExtension.get().listSecurityGroups(),
+					new Predicate<SecurityGroup>() {
+						@Override
+						public boolean apply(SecurityGroup input) {
+							return input.getId().equals(groupId);
+						}
+					});
 
-   @Override
-   public Iterable<Hardware> listHardwareProfiles() {
-      return ImmutableSet.<Hardware> of(StubComputeServiceDependenciesModule.stub("small", 1, 1740, 160),
-            StubComputeServiceDependenciesModule.stub("medium", 4, 7680, 850),
-            StubComputeServiceDependenciesModule.stub("large", 8, 15360, 1690));
-   }
+			if (secGroup.isPresent()) {
+				groupsForNodes.put(node.getId(), secGroup.get());
+			}
+		}
 
-   @Override
-   public Iterable<Image> listImages() {
-      // initializing as a List, as ImmutableSet does not allow you to put
-      // duplicates
-      Builder<Image> images = ImmutableList.builder();
-      int id = 1;
-      for (boolean is64Bit : new boolean[] { true, false })
-         for (Entry<OsFamily, Map<String, String>> osVersions : this.osToVersionMap.entrySet()) {
-            for (String version : ImmutableSet.copyOf(osVersions.getValue().values())) {
-               String desc = String.format("stub %s %s", osVersions.getKey(), is64Bit);
-               images.add(new ImageBuilder().ids(id++ + "").name(osVersions.getKey().name()).location(location.get())
-                     .operatingSystem(new OperatingSystem(osVersions.getKey(), desc, version, null, desc, is64Bit))
-                     .description(desc).status(Image.Status.AVAILABLE).build());
-            }
-         }
-      return images.build();
-   }
-   
-   @Override
-   public Image getImage(String id) {
-      return find(listImages(), ImagePredicates.idEquals(id), null);
-   }
-   
-   @Override
-   public Iterable<NodeMetadata> listNodes() {
-      return nodes.values();
-   }
+		setStateOnNodeAfterDelay(NodeMetadataStatus.RUNNING, node, 100);
+		return new NodeWithInitialCredentials(node);
+	}
 
-   @Override
-   public Iterable<NodeMetadata> listNodesByIds(Iterable<String> ids) {
-      return filterKeys(nodes, in(ImmutableSet.copyOf(ids))).values();
-   }
+	@Override
+	public Iterable<Hardware> listHardwareProfiles() {
+		return ImmutableSet.<Hardware> of(StubComputeServiceDependenciesModule
+				.stub("small", 1, 1740, 160),
+				StubComputeServiceDependenciesModule.stub("medium", 4, 7680,
+						850), StubComputeServiceDependenciesModule.stub(
+						"large", 8, 15360, 1690));
+	}
 
-   @SuppressWarnings("unchecked")
-   @Override
-   public Iterable<Location> listLocations() {
-      return (Iterable<Location>) locationSupplier.get();
-   }
+	@Override
+	public Iterable<Image> listImages() {
+		// initializing as a List, as ImmutableSet does not allow you to put
+		// duplicates
+		Builder<Image> images = ImmutableList.builder();
+		int id = 1;
+		for (boolean is64Bit : new boolean[] { true, false })
+			for (Entry<OsFamily, Map<String, String>> osVersions : this.osToVersionMap
+					.entrySet()) {
+				for (String version : ImmutableSet.copyOf(osVersions.getValue()
+						.values())) {
+					String desc = String.format("stub %s %s",
+							osVersions.getKey(), is64Bit);
+					images.add(new ImageBuilder()
+							.ids(id++ + "")
+							.name(osVersions.getKey().name())
+							.location(location.get())
+							.operatingSystem(
+									new OperatingSystem(osVersions.getKey(),
+											desc, version, null, desc, is64Bit))
+							.description(desc).status(Image.Status.AVAILABLE)
+							.build());
+				}
+			}
+		return images.build();
+	}
 
-   @Override
-   public NodeMetadata getNode(String id) {
-      return nodes.get(id);
-   }
+	@Override
+	public Image getImage(String id) {
+		return find(listImages(), ImagePredicates.idEquals(id), null);
+	}
 
-   @Override
-   public void destroyNode(final String id) {
-      NodeMetadata node = nodes.get(id);
-      if (node == null)
-         return;
-      setStateOnNodeAfterDelay(Status.PENDING, node, 0);
-      setStateOnNodeAfterDelay(Status.TERMINATED, node, 50);
-      groupsForNodes.removeAll(id);
-      
-      ioExecutor.execute(new Runnable() {
+	@Override
+	public Iterable<NodeMetadata> listNodes() {
+		return nodes.values();
+	}
 
-         @Override
-         public void run() {
-            try {
-               Thread.sleep(200);
-            } catch (InterruptedException e) {
-               Throwables.propagate(e);
-            } finally {
-               nodes.remove(id);
-            }
-         }
+	@Override
+	public Iterable<NodeMetadata> listNodesByIds(Iterable<String> ids) {
+		return filterKeys(nodes, in(ImmutableSet.copyOf(ids))).values();
+	}
 
-      });
-   }
+	@SuppressWarnings("unchecked")
+	@Override
+	public Iterable<Location> listLocations() {
+		return (Iterable<Location>) locationSupplier.get();
+	}
 
-   @Override
-   public void rebootNode(String id) {
-      NodeMetadata node = nodes.get(id);
-      if (node == null)
-         throw new ResourceNotFoundException("node not found: " + id);
-      setStateOnNode(Status.PENDING, node);
-      setStateOnNodeAfterDelay(Status.RUNNING, node, 50);
-   }
+	@Override
+	public NodeMetadata getNode(String id) {
+		return nodes.get(id);
+	}
 
-   @Override
-   public void resumeNode(String id) {
-      NodeMetadata node = nodes.get(id);
-      if (node == null)
-         throw new ResourceNotFoundException("node not found: " + id);
-      if (node.getStatus() == Status.RUNNING)
-         return;
-      if (node.getStatus() != Status.SUSPENDED)
-         throw new IllegalStateException("to resume a node, it must be in suspended status, not: " + formatStatus(node));
-      setStateOnNode(Status.PENDING, node);
-      setStateOnNodeAfterDelay(Status.RUNNING, node, 50);
-   }
+	@Override
+	public void destroyNode(final String id) {
+		NodeMetadata node = nodes.get(id);
+		if (node == null)
+			return;
+		setStateOnNodeAfterDelay(NodeMetadataStatus.PENDING, node, 0);
+		setStateOnNodeAfterDelay(NodeMetadataStatus.TERMINATED, node, 50);
+		groupsForNodes.removeAll(id);
 
-   @Override
-   public void suspendNode(String id) {
-      NodeMetadata node = nodes.get(id);
-      if (node == null)
-         throw new ResourceNotFoundException("node not found: " + id);
-      if (node.getStatus() == Status.SUSPENDED)
-         return;
-      if (node.getStatus() != Status.RUNNING)
-         throw new IllegalStateException("to suspend a node, it must be in running status, not: " + formatStatus(node));
-      setStateOnNode(Status.PENDING, node);
-      setStateOnNodeAfterDelay(Status.SUSPENDED, node, 50);
-   }
+		ioExecutor.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					Throwables.propagate(e);
+				} finally {
+					nodes.remove(id);
+				}
+			}
+
+		});
+	}
+
+	@Override
+	public void rebootNode(String id) {
+		NodeMetadata node = nodes.get(id);
+		if (node == null)
+			throw new ResourceNotFoundException("node not found: " + id);
+		setStateOnNode(NodeMetadataStatus.PENDING, node);
+		setStateOnNodeAfterDelay(NodeMetadataStatus.RUNNING, node, 50);
+	}
+
+	@Override
+	public void resumeNode(String id) {
+		NodeMetadata node = nodes.get(id);
+		if (node == null)
+			throw new ResourceNotFoundException("node not found: " + id);
+		if (node.getStatus() == NodeMetadataStatus.RUNNING)
+			return;
+		if (node.getStatus() != NodeMetadataStatus.SUSPENDED)
+			throw new IllegalStateException(
+					"to resume a node, it must be in suspended status, not: "
+							+ formatStatus(node));
+		setStateOnNode(NodeMetadataStatus.PENDING, node);
+		setStateOnNodeAfterDelay(NodeMetadataStatus.RUNNING, node, 50);
+	}
+
+	@Override
+	public void suspendNode(String id) {
+		NodeMetadata node = nodes.get(id);
+		if (node == null)
+			throw new ResourceNotFoundException("node not found: " + id);
+		if (node.getStatus() == NodeMetadataStatus.SUSPENDED)
+			return;
+		if (node.getStatus() != NodeMetadataStatus.RUNNING)
+			throw new IllegalStateException(
+					"to suspend a node, it must be in running status, not: "
+							+ formatStatus(node));
+		setStateOnNode(NodeMetadataStatus.PENDING, node);
+		setStateOnNodeAfterDelay(NodeMetadataStatus.SUSPENDED, node, 50);
+	}
 
 }

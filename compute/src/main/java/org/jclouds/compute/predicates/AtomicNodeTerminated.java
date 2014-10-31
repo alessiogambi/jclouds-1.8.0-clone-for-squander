@@ -19,26 +19,28 @@ package org.jclouds.compute.predicates;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataStatus;
 import org.jclouds.compute.predicates.internal.TrueIfNullOrDeletedRefreshAndDoubleCheckOnFalse;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 
 import com.google.inject.Inject;
 
-public class AtomicNodeTerminated extends TrueIfNullOrDeletedRefreshAndDoubleCheckOnFalse<NodeMetadata.Status, NodeMetadata> {
+public class AtomicNodeTerminated
+		extends
+		TrueIfNullOrDeletedRefreshAndDoubleCheckOnFalse<NodeMetadataStatus, NodeMetadata> {
 
-   private final GetNodeMetadataStrategy client;
+	private final GetNodeMetadataStrategy client;
 
-   @Inject
-   public AtomicNodeTerminated(GetNodeMetadataStrategy client) {
-      super(Status.TERMINATED);
-      this.client = checkNotNull(client, "client");
-   }
-   
-   @Override
-   protected NodeMetadata refreshOrNull(NodeMetadata resource) {
-      if (resource == null || resource.getId() == null)
-         return null;
-      return client.getNode(resource.getId());
-   }
+	@Inject
+	public AtomicNodeTerminated(GetNodeMetadataStrategy client) {
+		super(NodeMetadataStatus.TERMINATED);
+		this.client = checkNotNull(client, "client");
+	}
+
+	@Override
+	protected NodeMetadata refreshOrNull(NodeMetadata resource) {
+		if (resource == null || resource.getId() == null)
+			return null;
+		return client.getNode(resource.getId());
+	}
 }

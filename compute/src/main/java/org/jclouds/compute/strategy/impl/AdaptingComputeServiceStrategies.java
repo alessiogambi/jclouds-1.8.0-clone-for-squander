@@ -40,7 +40,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataStatus;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
@@ -151,7 +151,7 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
    }
 
    private void checkStateAvailable(NodeMetadata node) {
-      checkState(node != null && node.getStatus() != Status.TERMINATED,
+      checkState(node != null && node.getStatus() != NodeMetadataStatus.TERMINATED,
                "node %s terminated or unavailable! current status: %s", node, formatStatus(node));
    }
 

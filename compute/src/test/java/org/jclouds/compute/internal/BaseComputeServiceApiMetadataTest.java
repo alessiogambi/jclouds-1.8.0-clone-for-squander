@@ -28,10 +28,14 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
 
 @Test(groups = "unit")
-public abstract class BaseComputeServiceApiMetadataTest extends BaseApiMetadataTest {
+public abstract class BaseComputeServiceApiMetadataTest extends
+		BaseApiMetadataTest {
 
-   public BaseComputeServiceApiMetadataTest(ApiMetadata toTest) {
-     super(toTest, ImmutableSet.<TypeToken<? extends View>>of(typeToken(ComputeServiceContext.class)));
-   }
+	public BaseComputeServiceApiMetadataTest(ApiMetadata toTest) {
+		super(
+				toTest,
+				ImmutableSet
+						.<TypeToken<? extends View>> of(typeToken(ComputeServiceContext.class)));
+	}
 
 }

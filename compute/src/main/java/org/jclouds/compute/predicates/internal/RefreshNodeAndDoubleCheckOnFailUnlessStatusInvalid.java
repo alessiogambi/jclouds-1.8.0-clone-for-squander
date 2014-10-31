@@ -22,8 +22,9 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataStatus;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 
 import com.google.common.collect.ImmutableSet;
@@ -31,30 +32,34 @@ import com.google.inject.Inject;
 
 /**
  * 
- * The point of RefreshAndDoubleCheckOnFailUnlessStateInvalid is to keep an atomic reference to a
- * node, so as to eliminate a redundant {@link ComputeService#getNodeMetadata} call after the
- * predicate passes.
+ * The point of RefreshAndDoubleCheckOnFailUnlessStateInvalid is to keep an
+ * atomic reference to a node, so as to eliminate a redundant
+ * {@link ComputeService#getNodeMetadata} call after the predicate passes.
  */
 @Singleton
-public class RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid extends RefreshAndDoubleCheckOnFailUnlessStatusInvalid<NodeMetadata.Status, NodeMetadata> {
+public class RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid
+		extends
+		RefreshAndDoubleCheckOnFailUnlessStatusInvalid<NodeMetadataStatus, NodeMetadata> {
 
-   private final GetNodeMetadataStrategy client;
+	private final GetNodeMetadataStrategy client;
 
-   @Inject
-   public RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid(Status intended, GetNodeMetadataStrategy client) {
-      this(intended, ImmutableSet.of(Status.ERROR), client);
-   }
+	@Inject
+	public RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid(
+			NodeMetadataStatus intended, GetNodeMetadataStrategy client) {
+		this(intended, ImmutableSet.of(NodeMetadataStatus.ERROR), client);
+	}
 
-   public RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid(Status intended, Set<Status> invalids,
-            GetNodeMetadataStrategy client) {
-      super(intended, invalids);
-      this.client = checkNotNull(client, "client");
-   }
+	public RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid(
+			NodeMetadataStatus intended, Set<NodeMetadataStatus> invalids,
+			GetNodeMetadataStrategy client) {
+		super(intended, invalids);
+		this.client = checkNotNull(client, "client");
+	}
 
-   @Override
-   protected NodeMetadata refreshOrNull(NodeMetadata resource) {
-      if (resource == null || resource.getId() == null)
-         return null;
-      return client.getNode(resource.getId());
-   }
+	@Override
+	protected NodeMetadata refreshOrNull(NodeMetadata resource) {
+		if (resource == null || resource.getId() == null)
+			return null;
+		return client.getNode(resource.getId());
+	}
 }

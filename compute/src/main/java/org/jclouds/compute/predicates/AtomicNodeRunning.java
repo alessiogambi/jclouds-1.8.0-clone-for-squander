@@ -19,7 +19,7 @@ package org.jclouds.compute.predicates;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataStatus;
 import org.jclouds.compute.predicates.internal.RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 
@@ -30,10 +30,13 @@ import com.google.common.collect.ImmutableSet;
  * Tests to see if a node is running.
  */
 @Singleton
-public class AtomicNodeRunning extends RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid {
+public class AtomicNodeRunning extends
+		RefreshNodeAndDoubleCheckOnFailUnlessStatusInvalid {
 
-   @Inject
-   public AtomicNodeRunning(GetNodeMetadataStrategy client) {
-      super(Status.RUNNING, ImmutableSet.of(Status.ERROR, Status.TERMINATED), client);
-   }
+	@Inject
+	public AtomicNodeRunning(GetNodeMetadataStrategy client) {
+		super(NodeMetadataStatus.RUNNING, ImmutableSet.of(
+				NodeMetadataStatus.ERROR, NodeMetadataStatus.TERMINATED),
+				client);
+	}
 }
