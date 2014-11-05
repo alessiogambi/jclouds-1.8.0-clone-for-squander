@@ -1,3 +1,10 @@
+IMPORTANT NOTE:
+==============
+This repository is a clone of the git official repo and it contains modifications that enable the use of the Squander tool.
+In particular, we are working on the version 1.8.0 therefore we remove from git-hub all the later versions.
+
+
+
 jclouds
 ======
 jclouds allows provisioning and control of cloud resources, including blobstore
