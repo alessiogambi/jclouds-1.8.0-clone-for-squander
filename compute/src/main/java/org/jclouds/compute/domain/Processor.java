@@ -26,61 +26,63 @@ import com.google.common.collect.ComparisonChain;
  * Processor (or CPU) as a part of {@link Hardware} of a {@link NodeMetadata}
  */
 public class Processor implements Comparable<Processor> {
-   private final double cores;
-   private final double speed;
+	private final Double cores;
+	private final Double speed;
 
-   public Processor(double cores, double speed) {
-      this.cores = cores;
-      this.speed = speed;
-   }
+	public Processor(double cores, double speed) {
+		this.cores = cores;
+		this.speed = speed;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public int compareTo(Processor that) {
-      Processor thatProcessor = Processor.class.cast(that);
-      return ComparisonChain.start().compare(this.getCores(), thatProcessor.getCores())
-            .compare(this.getSpeed(), thatProcessor.getSpeed()).result();
-   }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int compareTo(Processor that) {
+		Processor thatProcessor = Processor.class.cast(that);
+		return ComparisonChain.start()
+				.compare(this.getCores(), thatProcessor.getCores())
+				.compare(this.getSpeed(), thatProcessor.getSpeed()).result();
+	}
 
-   /**
-    * Amount of virtual or physical cores provided
-    */
-   public double getCores() {
-      return cores;
-   }
+	/**
+	 * Amount of virtual or physical cores provided
+	 */
+	public double getCores() {
+		return cores;
+	}
 
-   /**
-    * Speed, not necessarily in ghz, but certainly relevant to other processors
-    * in the same provider.
-    */
-   public double getSpeed() {
-      return speed;
-   }
+	/**
+	 * Speed, not necessarily in ghz, but certainly relevant to other processors
+	 * in the same provider.
+	 */
+	public double getSpeed() {
+		return speed;
+	}
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o)
-         return true;
-      if (o == null || getClass() != o.getClass())
-         return false;
-      Processor that = Processor.class.cast(o);
-      return equal(this.cores, that.cores) && equal(this.speed, that.speed);
-   }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Processor that = Processor.class.cast(o);
+		return equal(this.cores, that.cores) && equal(this.speed, that.speed);
+	}
 
-   @Override
-   public int hashCode() {
-      return Objects.hashCode(cores, speed);
-   }
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(cores, speed);
+	}
 
-   @Override
-   public String toString() {
-      return string().toString();
-   }
+	@Override
+	public String toString() {
+		return string().toString();
+	}
 
-   protected ToStringHelper string() {
-      return Objects.toStringHelper("").omitNullValues().add("cores", cores).add("speed", speed);
-   }
+	protected ToStringHelper string() {
+		return Objects.toStringHelper("").omitNullValues().add("cores", cores)
+				.add("speed", speed);
+	}
 
 }
