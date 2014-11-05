@@ -745,7 +745,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
     * 
     * @param blockUntilRunning
     *           (default true) whether to block until the nodes in this template
-    *           are in {@link Status#RUNNING} state
+    *           are in {@link ImageStatus#RUNNING} state
     */
    public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
       this.blockUntilRunning = blockUntilRunning;

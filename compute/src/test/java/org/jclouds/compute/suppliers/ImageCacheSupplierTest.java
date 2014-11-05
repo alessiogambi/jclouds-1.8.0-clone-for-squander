@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
+import org.jclouds.compute.domain.ImageStatus;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
@@ -44,7 +45,7 @@ public class ImageCacheSupplierTest {
          .description("osDescription").arch("X86_32").build();
 
    private Image image = new ImageBuilder().id("imageId").providerId("imageId").name("imageName")
-         .description("imageDescription").version("imageVersion").operatingSystem(os).status(Image.Status.AVAILABLE)
+         .description("imageDescription").version("imageVersion").operatingSystem(os).status(ImageStatus.AVAILABLE)
          .location(location).build();
 
    private Set<? extends Image> images = ImmutableSet.of(image);

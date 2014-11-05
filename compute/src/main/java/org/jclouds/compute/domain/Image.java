@@ -27,31 +27,7 @@ import com.google.inject.ImplementedBy;
  * Running Operating system
  */
 @ImplementedBy(ImageImpl.class)
-public interface Image extends ComputeMetadataIncludingStatus<Image.Status> {
-
-	public static enum Status {
-		/**
-		 * The image is in transition
-		 */
-		PENDING,
-		/**
-		 * The image is visible, and in the process of being deleted.
-		 */
-		DELETED,
-		/**
-		 * The image is available.
-		 */
-		AVAILABLE,
-		/**
-		 * There is an error on the image
-		 */
-		ERROR,
-		/**
-		 * The state of the image is unrecognized.
-		 */
-		UNRECOGNIZED;
-
-	}
+public interface Image extends ComputeMetadataIncludingStatus<ImageStatus> {
 
 	/**
 	 * The operating system installed on this image

@@ -21,7 +21,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
@@ -29,7 +28,7 @@ import org.jclouds.javax.annotation.Nullable;
 
 public class ImageBuilder extends ComputeMetadataBuilder {
    private OperatingSystem operatingSystem;
-   private Status status;
+   private ImageStatus status;
    private String backendStatus;
    private String version;
    private String description;
@@ -44,7 +43,7 @@ public class ImageBuilder extends ComputeMetadataBuilder {
       return this;
    }
    
-   public ImageBuilder status(Status status) {
+   public ImageBuilder status(ImageStatus status) {
       this.status = checkNotNull(status, "status");
       return this;
    }

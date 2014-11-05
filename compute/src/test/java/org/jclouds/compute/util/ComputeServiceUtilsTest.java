@@ -30,7 +30,7 @@ import java.util.Map;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.ComputeMetadataIncludingStatus;
-import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.ImageStatus;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -53,8 +53,8 @@ public class ComputeServiceUtilsTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testFormatStatusWithBackendStatus() {
-      ComputeMetadataIncludingStatus<Image.Status> resource = createMock(ComputeMetadataIncludingStatus.class);
-      expect(resource.getStatus()).andReturn(Image.Status.PENDING);
+      ComputeMetadataIncludingStatus<ImageStatus> resource = createMock(ComputeMetadataIncludingStatus.class);
+      expect(resource.getStatus()).andReturn(ImageStatus.PENDING);
       expect(resource.getBackendStatus()).andReturn("queued").anyTimes();
       replay(resource);
       assertEquals(formatStatus(resource), "PENDING[queued]");
@@ -64,8 +64,8 @@ public class ComputeServiceUtilsTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testFormatStatusWithoutBackendStatus() {
-      ComputeMetadataIncludingStatus<Image.Status> resource = createMock(ComputeMetadataIncludingStatus.class);
-      expect(resource.getStatus()).andReturn(Image.Status.PENDING);
+      ComputeMetadataIncludingStatus<ImageStatus> resource = createMock(ComputeMetadataIncludingStatus.class);
+      expect(resource.getStatus()).andReturn(ImageStatus.PENDING);
       expect(resource.getBackendStatus()).andReturn(null).anyTimes();
       replay(resource);
       assertEquals(formatStatus(resource), "PENDING");

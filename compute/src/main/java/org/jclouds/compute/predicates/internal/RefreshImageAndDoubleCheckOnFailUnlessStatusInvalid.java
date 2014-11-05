@@ -23,7 +23,7 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.Image.Status;
+import org.jclouds.compute.domain.ImageStatus;
 import org.jclouds.compute.strategy.GetImageStrategy;
 
 import com.google.common.collect.ImmutableSet;
@@ -36,16 +36,16 @@ import com.google.inject.Inject;
  * predicate passes.
  */
 @Singleton
-public class RefreshImageAndDoubleCheckOnFailUnlessStatusInvalid extends RefreshAndDoubleCheckOnFailUnlessStatusInvalid<Image.Status, Image> {
+public class RefreshImageAndDoubleCheckOnFailUnlessStatusInvalid extends RefreshAndDoubleCheckOnFailUnlessStatusInvalid<ImageStatus, Image> {
 
    private final GetImageStrategy client;
 
    @Inject
-   public RefreshImageAndDoubleCheckOnFailUnlessStatusInvalid(Status intended, GetImageStrategy client) {
-      this(intended, ImmutableSet.of(Status.ERROR), client);
+   public RefreshImageAndDoubleCheckOnFailUnlessStatusInvalid(ImageStatus intended, GetImageStrategy client) {
+      this(intended, ImmutableSet.of(ImageStatus.ERROR), client);
    }
 
-   public RefreshImageAndDoubleCheckOnFailUnlessStatusInvalid(Status intended, Set<Status> invalids,
+   public RefreshImageAndDoubleCheckOnFailUnlessStatusInvalid(ImageStatus intended, Set<ImageStatus> invalids,
             GetImageStrategy client) {
       super(intended, invalids);
       this.client = checkNotNull(client, "client");

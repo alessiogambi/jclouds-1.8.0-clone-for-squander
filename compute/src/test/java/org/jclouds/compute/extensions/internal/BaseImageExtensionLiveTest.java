@@ -30,6 +30,7 @@ import javax.inject.Named;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.ImageStatus;
 import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
@@ -192,7 +193,7 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
 
          Optional<? extends Image> image = getImage();
 
-         if (image.isPresent() && image.get().getStatus() != Image.Status.DELETED) {
+         if (image.isPresent() && image.get().getStatus() != ImageStatus.DELETED) {
             Optional<ImageExtension> imageExtension = view.getComputeService().getImageExtension();
             if (imageExtension.isPresent()) {
                imageExtension.get().deleteImage(image.get().getId());

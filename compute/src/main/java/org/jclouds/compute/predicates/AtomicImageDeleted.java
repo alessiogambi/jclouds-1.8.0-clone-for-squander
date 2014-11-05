@@ -19,26 +19,27 @@ package org.jclouds.compute.predicates;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.Image.Status;
+import org.jclouds.compute.domain.ImageStatus;
 import org.jclouds.compute.predicates.internal.TrueIfNullOrDeletedRefreshAndDoubleCheckOnFalse;
 import org.jclouds.compute.strategy.GetImageStrategy;
 
 import com.google.inject.Inject;
 
-public class AtomicImageDeleted extends TrueIfNullOrDeletedRefreshAndDoubleCheckOnFalse<Image.Status, Image> {
+public class AtomicImageDeleted extends
+		TrueIfNullOrDeletedRefreshAndDoubleCheckOnFalse<ImageStatus, Image> {
 
-   private final GetImageStrategy client;
+	private final GetImageStrategy client;
 
-   @Inject
-   public AtomicImageDeleted(GetImageStrategy client) {
-      super(Status.DELETED);
-      this.client = checkNotNull(client, "client");
-   }
-   
-   @Override
-   protected Image refreshOrNull(Image resource) {
-      if (resource == null || resource.getId() == null)
-         return null;
-      return client.getImage(resource.getId());
-   }
+	@Inject
+	public AtomicImageDeleted(GetImageStrategy client) {
+		super(ImageStatus.DELETED);
+		this.client = checkNotNull(client, "client");
+	}
+
+	@Override
+	protected Image refreshOrNull(Image resource) {
+		if (resource == null || resource.getId() == null)
+			return null;
+		return client.getImage(resource.getId());
+	}
 }

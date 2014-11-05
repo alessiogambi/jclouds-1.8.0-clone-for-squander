@@ -36,6 +36,7 @@ import org.jclouds.compute.JCloudsNativeComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
+import org.jclouds.compute.domain.ImageStatus;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeMetadataStatus;
@@ -203,7 +204,7 @@ public class StubComputeServiceAdapter implements
 							.operatingSystem(
 									new OperatingSystem(osVersions.getKey(),
 											desc, version, null, desc, is64Bit))
-							.description(desc).status(Image.Status.AVAILABLE)
+							.description(desc).status(ImageStatus.AVAILABLE)
 							.build());
 				}
 			}

@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.ImageStatus;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
@@ -35,14 +36,14 @@ import com.google.common.base.Objects.ToStringHelper;
 public class ImageImpl extends ComputeMetadataImpl implements Image {
 
    private final OperatingSystem operatingSystem;
-   private final Status status;
+   private final ImageStatus status;
    private final String backendStatus;
    private final String version;
    private final String description;
    private final LoginCredentials defaultCredentials;
 
    public ImageImpl(String providerId, String name, String id, Location location, URI uri,
-            Map<String, String> userMetadata, Set<String> tags, OperatingSystem operatingSystem, Image.Status status,
+            Map<String, String> userMetadata, Set<String> tags, OperatingSystem operatingSystem, ImageStatus status,
             @Nullable String backendStatus, @Nullable String description, @Nullable String version,
             @Nullable LoginCredentials defaultCredentials) {
       super(ComputeType.IMAGE, providerId, name, id, location, uri, userMetadata, tags);
@@ -66,7 +67,7 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
     * {@inheritDoc}
     */
    @Override
-   public Status getStatus() {
+   public ImageStatus getStatus() {
       return status;
    }
 

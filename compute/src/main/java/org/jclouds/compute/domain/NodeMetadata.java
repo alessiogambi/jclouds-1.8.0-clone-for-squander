@@ -28,9 +28,6 @@ import com.google.inject.ImplementedBy;
 public interface NodeMetadata extends
 		ComputeMetadataIncludingStatus<NodeMetadataStatus> {
 
-	@Override
-	public NodeMetadataStatus getStatus();
-	
 	/**
 	 * <h4>note</h4> hostname is something that is set in the operating system
 	 * image, so this value, if present, cannot be guaranteed on images not

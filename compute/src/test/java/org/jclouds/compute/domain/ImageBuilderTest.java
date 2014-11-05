@@ -18,7 +18,6 @@ package org.jclouds.compute.domain;
 
 import static org.testng.Assert.assertNull;
 
-import org.jclouds.compute.domain.Image.Status;
 import org.testng.annotations.Test;
 
 /**
@@ -33,7 +32,7 @@ public class ImageBuilderTest {
     public void testNullDescription() {
         Image img = new ImageBuilder().id("test-id")
                 .description(null)
-                .status(Status.AVAILABLE)
+                .status(ImageStatus.AVAILABLE)
                 .operatingSystem(new OperatingSystem(OsFamily.CLOUD_LINUX, null, null, null, "os-description", true))
                 .build();
         assertNull(img.getDescription());

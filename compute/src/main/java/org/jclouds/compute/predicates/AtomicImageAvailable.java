@@ -19,7 +19,7 @@ package org.jclouds.compute.predicates;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.Image.Status;
+import org.jclouds.compute.domain.ImageStatus;
 import org.jclouds.compute.predicates.internal.RefreshImageAndDoubleCheckOnFailUnlessStatusInvalid;
 import org.jclouds.compute.strategy.GetImageStrategy;
 
@@ -30,10 +30,12 @@ import com.google.common.collect.ImmutableSet;
  * Tests to see if a image is available.
  */
 @Singleton
-public class AtomicImageAvailable extends RefreshImageAndDoubleCheckOnFailUnlessStatusInvalid {
+public class AtomicImageAvailable extends
+		RefreshImageAndDoubleCheckOnFailUnlessStatusInvalid {
 
-   @Inject
-   public AtomicImageAvailable(GetImageStrategy client) {
-      super(Status.AVAILABLE, ImmutableSet.of(Status.ERROR, Status.DELETED), client);
-   }
+	@Inject
+	public AtomicImageAvailable(GetImageStrategy client) {
+		super(ImageStatus.AVAILABLE, ImmutableSet.of(ImageStatus.ERROR,
+				ImageStatus.DELETED), client);
+	}
 }

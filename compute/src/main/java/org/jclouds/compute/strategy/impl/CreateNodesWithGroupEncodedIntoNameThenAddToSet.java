@@ -131,7 +131,7 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
     * to the jclouds {@link NodeMetadata} object. This call directly precedes customization, such as
     * executing scripts.
     * 
-    * </p> The outcome of this operation does not imply the node is {@link Status#RUNNING
+    * </p> The outcome of this operation does not imply the node is {@link ImageStatus#RUNNING
     * running}. If you want to insert logic after the node is created, yet before an attempt to
     * customize the node, then append your behaviour to this method.
     * 
@@ -160,7 +160,7 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
     * @param group group the node belongs to
     * @param name generated name of the node
     * @param template user-specified template
-    * @return node that is created, yet not necessarily in {@link Status#RUNNING}
+    * @return node that is created, yet not necessarily in {@link ImageStatus#RUNNING}
     */
    protected ListenableFuture<AtomicReference<NodeMetadata>> createNodeInGroupWithNameAndTemplate(String group, String name,
             Template template) {
