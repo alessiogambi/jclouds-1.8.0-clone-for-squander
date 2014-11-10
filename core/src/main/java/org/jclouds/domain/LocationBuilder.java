@@ -27,44 +27,54 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 public final class LocationBuilder {
-   private LocationScope scope;
-   private String id;
-   private String description;
-   private Location parent;
-   private Set<String> iso3166Codes = ImmutableSet.of();
-   private Map<String, Object> metadata = ImmutableMap.of();
+	private LocationScope scope;
+	private String id;
+	private String description;
+	private Location parent;
+	private Set<String> iso3166Codes = ImmutableSet.of();
+	private Map<String, Object> metadata = ImmutableMap.of();
 
-   public LocationBuilder scope(LocationScope scope) {
-      this.scope = scope;
-      return this;
-   }
+	public LocationBuilder scope(LocationScope scope) {
+		this.scope = scope;
+		return this;
+	}
 
-   public LocationBuilder id(String id) {
-      this.id = id;
-      return this;
-   }
+	public LocationBuilder id(String id) {
+		this.id = id;
+		return this;
+	}
 
-   public LocationBuilder description(String description) {
-      this.description = description;
-      return this;
-   }
+	public LocationBuilder description(String description) {
+		this.description = description;
+		return this;
+	}
 
-   public LocationBuilder parent(Location parent) {
-      this.parent = parent;
-      return this;
-   }
+	public LocationBuilder parent(Location parent) {
+		this.parent = parent;
+		return this;
+	}
 
-   public LocationBuilder iso3166Codes(Iterable<String> iso3166Codes) {
-      this.iso3166Codes = ImmutableSet.copyOf(checkNotNull(iso3166Codes, "iso3166Codes"));
-      return this;
-   }
+	public LocationBuilder iso3166Codes(Iterable<String> iso3166Codes) {
+		this.iso3166Codes = ImmutableSet.copyOf(checkNotNull(iso3166Codes,
+				"iso3166Codes"));
+		return this;
+	}
 
-   public LocationBuilder metadata(Map<String, Object> metadata) {
-      this.metadata = ImmutableMap.copyOf(checkNotNull(metadata, "metadata"));
-      return this;
-   }
+	public LocationBuilder metadata(Map<String, Object> metadata) {
+		this.metadata = ImmutableMap.copyOf(checkNotNull(metadata, "metadata"));
+		return this;
+	}
 
-   public Location build() {
-      return new LocationImpl(scope, id, description, parent, iso3166Codes, metadata);
-   }
+	public Location build() {
+		return new LocationImpl(scope, id, description, parent, iso3166Codes,
+				metadata);
+	}
+
+	public static LocationBuilder fromLocation(Location location) {
+		return new LocationBuilder().scope(location.getScope())
+				.id(location.getId()).description(location.getDescription())
+				.parent(location.getParent())
+				.iso3166Codes(location.getIso3166Codes())
+				.metadata(location.getMetadata());
+	}
 }

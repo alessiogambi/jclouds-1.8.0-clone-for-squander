@@ -35,82 +35,106 @@ import com.google.common.base.Objects.ToStringHelper;
 
 public class ImageImpl extends ComputeMetadataImpl implements Image {
 
-   private final OperatingSystem operatingSystem;
-   private final ImageStatus status;
-   private final String backendStatus;
-   private final String version;
-   private final String description;
-   private final LoginCredentials defaultCredentials;
+	private OperatingSystem operatingSystem;
+	private ImageStatus status;
+	private String backendStatus;
+	private String version;
+	private String description;
+	private LoginCredentials defaultCredentials;
 
-   public ImageImpl(String providerId, String name, String id, Location location, URI uri,
-            Map<String, String> userMetadata, Set<String> tags, OperatingSystem operatingSystem, ImageStatus status,
-            @Nullable String backendStatus, @Nullable String description, @Nullable String version,
-            @Nullable LoginCredentials defaultCredentials) {
-      super(ComputeType.IMAGE, providerId, name, id, location, uri, userMetadata, tags);
-      this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
-      this.status = checkNotNull(status, "status");
-      this.backendStatus = backendStatus;
-      this.version = version;
-      this.description = description;
-      this.defaultCredentials = defaultCredentials;
-   }
+	public ImageImpl(String providerId, String name, String id, Location location, URI uri,
+			Map<String, String> userMetadata, Set<String> tags, OperatingSystem operatingSystem, ImageStatus status,
+			@Nullable String backendStatus, @Nullable String description, @Nullable String version,
+			@Nullable LoginCredentials defaultCredentials) {
+		super(ComputeType.IMAGE, providerId, name, id, location, uri, userMetadata, tags);
+		this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
+		this.status = checkNotNull(status, "status");
+		this.backendStatus = backendStatus;
+		this.version = version;
+		this.description = description;
+		this.defaultCredentials = defaultCredentials;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public OperatingSystem getOperatingSystem() {
-      return operatingSystem;
-   }
+	public void setOperatingSystem(OperatingSystem operatingSystem) {
+		this.operatingSystem = operatingSystem;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public ImageStatus getStatus() {
-      return status;
-   }
+	public void setStatus(ImageStatus status) {
+		this.status = status;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getBackendStatus() {
-      return backendStatus;
-   }
+	public void setBackendStatus(String backendStatus) {
+		this.backendStatus = backendStatus;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getVersion() {
-      return version;
-   }
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getDescription() {
-      return description;
-   }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public LoginCredentials getDefaultCredentials() {
-      return defaultCredentials;
-   }
+	public void setDefaultCredentials(LoginCredentials defaultCredentials) {
+		this.defaultCredentials = defaultCredentials;
+	}
 
-   // equals and toString from super are sufficient to establish identity equivalence
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public OperatingSystem getOperatingSystem() {
+		return operatingSystem;
+	}
 
-   protected ToStringHelper string() {
-      ToStringHelper helper = computeToStringPrefix();
-      helper.add("os", getOperatingSystem()).add("description", getDescription()).add("version", getVersion())
-               .add("status", formatStatus(this))
-               .add("loginUser", defaultCredentials != null ? defaultCredentials.identity : null);
-      return addComputeToStringSuffix(helper);
-   }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ImageStatus getStatus() {
+		return status;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getBackendStatus() {
+		return backendStatus;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getVersion() {
+		return version;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public LoginCredentials getDefaultCredentials() {
+		return defaultCredentials;
+	}
+
+	// equals and toString from super are sufficient to establish identity equivalence
+
+	protected ToStringHelper string() {
+		ToStringHelper helper = computeToStringPrefix();
+		helper.add("os", getOperatingSystem()).add("description", getDescription()).add("version", getVersion())
+				.add("status", formatStatus(this))
+				.add("loginUser", defaultCredentials != null ? defaultCredentials.identity : null);
+		return addComputeToStringSuffix(helper);
+	}
 
 }

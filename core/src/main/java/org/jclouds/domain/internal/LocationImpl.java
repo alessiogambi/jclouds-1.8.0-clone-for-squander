@@ -33,97 +33,121 @@ import com.google.common.collect.ImmutableSet;
 
 public class LocationImpl implements Location {
 
-   private final LocationScope scope;
-   private final String id;
-   private final String description;
-   private final Location parent;
-   private final Set<String> iso3166Codes;
-   private final Map<String, Object> metadata;
+	private LocationScope scope;
+	private String id;
+	private String description;
+	private Location parent;
+	private Set<String> iso3166Codes;
+	private Map<String, Object> metadata;
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o)
-         return true;
-      if (o == null || getClass() != o.getClass())
-         return false;
-      LocationImpl that = LocationImpl.class.cast(o);
-      return equal(this.scope, that.scope) && equal(this.id, that.id) && equal(this.parent, that.parent);
-   }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		LocationImpl that = LocationImpl.class.cast(o);
+		return equal(this.scope, that.scope) && equal(this.id, that.id) && equal(this.parent, that.parent);
+	}
 
-   @Override
-   public int hashCode() {
-      return Objects.hashCode(scope, id, parent);
-   }
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(scope, id, parent);
+	}
 
-   @Override
-   public String toString() {
-      ToStringHelper helper = Objects.toStringHelper("").omitNullValues().add("scope", scope).add("id", id)
-            .add("description", description);
-      if (parent != null)
-         helper.add("parent", parent.getId());
-      if (iso3166Codes.size() > 0)
-         helper.add("iso3166Codes", iso3166Codes);
-      if (metadata.size() > 0)
-         helper.add("metadata", metadata);
-      return helper.toString();
-   }
+	@Override
+	public String toString() {
+		ToStringHelper helper = Objects.toStringHelper("").omitNullValues().add("scope", scope).add("id", id)
+				.add("description", description);
+		if (parent != null)
+			helper.add("parent", parent.getId());
+		if (iso3166Codes.size() > 0)
+			helper.add("iso3166Codes", iso3166Codes);
+		if (metadata.size() > 0)
+			helper.add("metadata", metadata);
+		return helper.toString();
+	}
 
-   public LocationImpl(LocationScope scope, String id, String description, @Nullable Location parent,
-            Iterable<String> iso3166Codes, Map<String, Object> metadata) {
-      this.scope = checkNotNull(scope, "scope");
-      this.id = checkNotNull(id, "id");
-      this.description = checkNotNull(description, "description");
-      this.metadata = ImmutableMap.copyOf(checkNotNull(metadata, "metadata"));
-      this.iso3166Codes = ImmutableSet.copyOf(checkNotNull(iso3166Codes, "iso3166Codes"));
-      this.parent = parent;
-   }
+	public LocationImpl(LocationScope scope, String id, String description, @Nullable Location parent,
+			Iterable<String> iso3166Codes, Map<String, Object> metadata) {
+		this.scope = checkNotNull(scope, "scope");
+		this.id = checkNotNull(id, "id");
+		this.description = checkNotNull(description, "description");
+		this.metadata = ImmutableMap.copyOf(checkNotNull(metadata, "metadata"));
+		this.iso3166Codes = ImmutableSet.copyOf(checkNotNull(iso3166Codes, "iso3166Codes"));
+		this.parent = parent;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public LocationScope getScope() {
-      return scope;
-   }
+	public void setScope(LocationScope scope) {
+		this.scope = scope;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return id;
-   }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getDescription() {
-      return description;
-   }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Location getParent() {
-      return parent;
-   }
+	public void setParent(Location parent) {
+		this.parent = parent;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return iso3166Codes;
-   }
+	public void setIso3166Codes(Set<String> iso3166Codes) {
+		this.iso3166Codes = iso3166Codes;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Map<String, Object> getMetadata() {
-      return metadata;
-   }
+	public void setMetadata(Map<String, Object> metadata) {
+		this.metadata = metadata;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public LocationScope getScope() {
+		return scope;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Location getParent() {
+		return parent;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<String> getIso3166Codes() {
+		return iso3166Codes;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<String, Object> getMetadata() {
+		return metadata;
+	}
 
 }

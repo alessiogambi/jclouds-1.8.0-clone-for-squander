@@ -37,99 +37,117 @@ import com.google.common.collect.Maps;
  */
 public abstract class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata<T> {
 
-   @Nullable
-   private final String providerId;
-   @Nullable
-   private final String name;
-   @Nullable
-   private final Location location;
-   @Nullable
-   private final URI uri;
-   private final Map<String, String> userMetadata = Maps.newLinkedHashMap();
+	@Nullable
+	private String providerId;
+	@Nullable
+	private String name;
+	@Nullable
+	private Location location;
+	@Nullable
+	private URI uri;
+	private Map<String, String> userMetadata = Maps.newLinkedHashMap();
 
-   public ResourceMetadataImpl(@Nullable String providerId, @Nullable String name, @Nullable Location location,
-         @Nullable URI uri, Map<String, String> userMetadata) {
-      this.providerId = providerId;
-      this.name = name;
-      this.location = location;
-      this.uri = uri;
-      this.userMetadata.putAll(checkNotNull(userMetadata, "userMetadata"));
-   }
+	public ResourceMetadataImpl(@Nullable String providerId, @Nullable String name, @Nullable Location location,
+			@Nullable URI uri, Map<String, String> userMetadata) {
+		this.providerId = providerId;
+		this.name = name;
+		this.location = location;
+		this.uri = uri;
+		this.userMetadata.putAll(checkNotNull(userMetadata, "userMetadata"));
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public int compareTo(ResourceMetadata<T> that) {
-      return start()
-            .compare(this.getName(), that.getName(), natural().nullsLast())
-            .result();
-   }
+	public void setProviderId(String providerId) {
+		this.providerId = providerId;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getProviderId() {
-      return providerId;
-   }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return name;
-   }
+	public void setLocation(Location location) {
+		this.location = location;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Location getLocation() {
-      return location;
-   }
+	public void setUri(URI uri) {
+		this.uri = uri;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getUri() {
-      return uri;
-   }
+	public void setUserMetadata(Map<String, String> userMetadata) {
+		this.userMetadata = userMetadata;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Map<String, String> getUserMetadata() {
-      return userMetadata;
-   }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int compareTo(ResourceMetadata<T> that) {
+		return start().compare(this.getName(), that.getName(), natural().nullsLast()).result();
+	}
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o)
-         return true;
-      if (o == null || getClass() != o.getClass())
-         return false;
-      ResourceMetadataImpl<?> that = ResourceMetadataImpl.class.cast(o);
-      return equal(this.getType(), that.getType()) && equal(this.providerId, that.providerId)
-               && equal(this.name, that.name) && equal(this.location, that.location) && equal(this.uri, that.uri);
-   }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getProviderId() {
+		return providerId;
+	}
 
-   @Override
-   public int hashCode() {
-      return Objects.hashCode(getType(), providerId, name, location, uri);
-   }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getName() {
+		return name;
+	}
 
-   @Override
-   public String toString() {
-      return string().toString();
-   }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Location getLocation() {
+		return location;
+	}
 
-   protected ToStringHelper string() {
-      return Objects.toStringHelper("").omitNullValues().add("type", getType()).add("providerId", providerId)
-               .add("name", name).add("location", location).add("uri", uri).add("userMetadata", userMetadata);
-   }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public URI getUri() {
+		return uri;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<String, String> getUserMetadata() {
+		return userMetadata;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		ResourceMetadataImpl<?> that = ResourceMetadataImpl.class.cast(o);
+		return equal(this.getType(), that.getType()) && equal(this.providerId, that.providerId)
+				&& equal(this.name, that.name) && equal(this.location, that.location) && equal(this.uri, that.uri);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(getType(), providerId, name, location, uri);
+	}
+
+	@Override
+	public String toString() {
+		return string().toString();
+	}
+
+	protected ToStringHelper string() {
+		return Objects.toStringHelper("").omitNullValues().add("type", getType()).add("providerId", providerId)
+				.add("name", name).add("location", location).add("uri", uri).add("userMetadata", userMetadata);
+	}
 
 }

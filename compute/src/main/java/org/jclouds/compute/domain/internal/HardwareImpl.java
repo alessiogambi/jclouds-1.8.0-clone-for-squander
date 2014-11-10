@@ -41,87 +41,108 @@ import com.google.common.collect.ImmutableList;
 
 public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
 
-   private final List<Processor> processors;
-   private final int ram;
-   private final List<Volume> volumes;
-   private final Predicate<Image> supportsImage;
-   private final String hypervisor;
+	private List<Processor> processors;
+	private int ram;
+	private List<Volume> volumes;
+	private Predicate<Image> supportsImage;
+	private String hypervisor;
 
-   public HardwareImpl(String providerId, String name, String id, @Nullable Location location, URI uri,
-         Map<String, String> userMetadata, Set<String> tags, Iterable<? extends Processor> processors, int ram,
-         Iterable<? extends Volume> volumes, Predicate<Image> supportsImage, @Nullable String hypervisor) {
-      super(ComputeType.HARDWARE, providerId, name, id, location, uri, userMetadata, tags);
-      this.processors = ImmutableList.copyOf(checkNotNull(processors, "processors"));
-      this.ram = ram;
-      this.volumes = ImmutableList.copyOf(checkNotNull(volumes, "volumes"));
-      this.supportsImage = supportsImage;
-      this.hypervisor = hypervisor;
-   }
+	public HardwareImpl(String providerId, String name, String id, @Nullable Location location, URI uri,
+			Map<String, String> userMetadata, Set<String> tags, Iterable<? extends Processor> processors, int ram,
+			Iterable<? extends Volume> volumes, Predicate<Image> supportsImage, @Nullable String hypervisor) {
+		super(ComputeType.HARDWARE, providerId, name, id, location, uri, userMetadata, tags);
+		this.processors = ImmutableList.copyOf(checkNotNull(processors, "processors"));
+		this.ram = ram;
+		this.volumes = ImmutableList.copyOf(checkNotNull(volumes, "volumes"));
+		this.supportsImage = supportsImage;
+		this.hypervisor = hypervisor;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public List<? extends Processor> getProcessors() {
-      return processors;
-   }
+	public void setProcessors(List<Processor> processors) {
+		this.processors = processors;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public int getRam() {
-      return ram;
-   }
+	public void setRam(int ram) {
+		this.ram = ram;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public List<? extends Volume> getVolumes() {
-      return volumes;
-   }
+	public void setVolumes(List<Volume> volumes) {
+		this.volumes = volumes;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   @Nullable
-   public String getHypervisor() {
-      return hypervisor;
-   }
+	public void setSupportsImage(Predicate<Image> supportsImage) {
+		this.supportsImage = supportsImage;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public int compareTo(ResourceMetadata<ComputeType> that) {
-      if (that instanceof Hardware) {
-         Hardware thatHardware = Hardware.class.cast(that);
-         return ComparisonChain.start().compare(getCores(this), getCores(thatHardware)).compare(this.getRam(), thatHardware.getRam())
-               .compare(getSpace(this), getSpace(thatHardware)).result();
-      } else {
-         return super.compareTo(that);
-      }
-   }
+	public void setHypervisor(String hypervisor) {
+		this.hypervisor = hypervisor;
+	}
 
-   @Override
-   protected ToStringHelper string() {
-      ToStringHelper helper = computeToStringPrefix();
-      helper.add("processors", processors).add("ram", ram);
-      if (volumes.size() > 0)
-         helper.add("volumes", volumes);
-      helper.add("hypervisor", hypervisor);
-      helper.add("supportsImage", supportsImage);
-      return addComputeToStringSuffix(helper);
-   }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<? extends Processor> getProcessors() {
+		return processors;
+	}
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Predicate<Image> supportsImage() {
-      return supportsImage;
-   }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getRam() {
+		return ram;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<? extends Volume> getVolumes() {
+		return volumes;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Nullable
+	public String getHypervisor() {
+		return hypervisor;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int compareTo(ResourceMetadata<ComputeType> that) {
+		if (that instanceof Hardware) {
+			Hardware thatHardware = Hardware.class.cast(that);
+			return ComparisonChain.start().compare(getCores(this), getCores(thatHardware))
+					.compare(this.getRam(), thatHardware.getRam()).compare(getSpace(this), getSpace(thatHardware))
+					.result();
+		} else {
+			return super.compareTo(that);
+		}
+	}
+
+	@Override
+	protected ToStringHelper string() {
+		ToStringHelper helper = computeToStringPrefix();
+		helper.add("processors", processors).add("ram", ram);
+		if (volumes.size() > 0)
+			helper.add("volumes", volumes);
+		helper.add("hypervisor", hypervisor);
+		helper.add("supportsImage", supportsImage);
+		return addComputeToStringSuffix(helper);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Predicate<Image> supportsImage() {
+		return supportsImage;
+	}
 
 }

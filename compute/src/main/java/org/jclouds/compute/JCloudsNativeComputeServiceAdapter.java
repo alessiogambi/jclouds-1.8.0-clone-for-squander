@@ -27,6 +27,7 @@ import org.jclouds.domain.Location;
  * types.
  */
 public interface JCloudsNativeComputeServiceAdapter extends
+	// I NET THAT THOSE CLASSES REPRESENT THE RESOURCES WITH DEPEND UPON.
       ComputeServiceAdapter<NodeMetadata, Hardware, Image, Location> {
    /**
     * {@inheritDoc}
